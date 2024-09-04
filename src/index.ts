@@ -28,14 +28,14 @@ cron.schedule(process.env.CRON_SHEDULE, () => {
   updateWetherData();
 });
 
-app.use(express.static("public"));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.set("view engine", "ejs");
 
 app.set("views", path.join(__dirname, "../public"));
 
 app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.render("index", {

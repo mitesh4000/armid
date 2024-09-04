@@ -25,11 +25,11 @@ cron.schedule(process.env.CRON_SHEDULE, () => {
     console.log("Running scheduled task at midnight...");
     updateWetherData();
 });
-app.use(express_1.default.static("public"));
+app.use(express_1.default.json());
+app.use(express_1.default.static(path_1.default.join(__dirname, "../public")));
 app.set("view engine", "ejs");
 app.set("views", path_1.default.join(__dirname, "../public"));
 app.use((0, cors_1.default)());
-app.use(express_1.default.json());
 app.get("/", (req, res) => {
     res.render("index", {
         title: "Welcome to My Node.js App",
