@@ -325,7 +325,7 @@ nav.navbar.bootsnav .navbar-toggle i{color: #4e4ffa;}
 /*-------------------------------------
         5. Service 
 --------------------------------------*/
-.service { padding: 260px 0 87px;}
+.service { padding: 87px 0 87px;}
 
 .single-service-item{
     text-align: center;
@@ -563,7 +563,8 @@ nav.navbar.bootsnav .navbar-toggle i{color: #4e4ffa;}
     max-width: 300px;
     margin:40px 0 20px;
 }
-.footer-contact p {
+.footer-contact a {
+    
     margin: 0;
     color: #d1d7e9;
 }

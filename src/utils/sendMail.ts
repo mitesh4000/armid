@@ -1,45 +1,87 @@
-import { TestAccount, Transporter } from "nodemailer";
+import { Transporter } from "nodemailer";
 
 const nodemailer = require("nodemailer");
-let email: string;
-let password: string;
 
-nodemailer.createTestAccount((err: Error, account: TestAccount) => {
-  if (err) {
-    console.error("Failed to create a testing account. " + err.message);
-    return process.exit(1);
-  }
-  email = account.user;
-  console.log("🚀 ~ nodemailer.createTestAccount ~ email:", email);
-  password = account.pass;
-  console.log("🚀 ~ nodemailer.createTestAccount ~ password:", password);
-  console.log("Credentials obtained, sending message...");
+const transporter: Transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT || "587"),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
-  let transporter: Transporter = nodemailer.createTransport({
-    host: account.smtp.host,
-    port: account.smtp.port,
-    secure: account.smtp.secure,
-    auth: {
-      user: account.user,
-      pass: account.pass,
-    },
-  });
-
+var sendVisitorMail = (
+  timeOfVisit: string,
+  timeSpentOnWebsite: string,
+  location: string
+): Promise<string> => {
   let message = {
-    from: "Sender Name <sender@example.com>",
-    to: "Recipient <recipient@example.com>",
-    subject: "Nodemailer is unicode friendly ✔",
-    text: "Hello to myself!",
-    html: "<p><b>Hello</b> to myself!</p>",
+    from: `${process.env.SMTP_USER}`,
+    to: `${process.env.RECIPIENT_EMAIL}`,
+    subject: "sombody visited your website",
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 16px;
+              color: #333;
+              margin: 0;
+              padding: 0;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              padding: 16px;
+              border: 1px solid #ccc;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+          </style>
+        </head>
+        <body>
+          <table>
+            <thead>
+              <tr>
+                <th>Visit Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Location: <b>${location}</b></td>
+              </tr>
+              <tr>
+                <td>Time of Visit: <b>${timeOfVisit}</b></td>
+              </tr>
+              <tr>
+                <td>Time Spent on Website: <b>${timeSpentOnWebsite}</b> seconds</td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `,
   };
 
-  transporter.sendMail(message, (err: Error | null, info: any) => {
-    if (err) {
-      console.log("Error occurred. " + err.message);
-      return process.exit(1);
-    }
+  return transporter
+    .sendMail(message)
+    .then((info: any): string => {
+      console.log(`SUCCESS:${info}`);
+      return `Message sent:${
+        info.messageId
+      } \n Preview URL:${nodemailer.getTestMessageUrl(info)}`;
+    })
+    .catch((err: Error) => {
+      console.error(err);
+      return `Error occurred. ${err.message}`;
+    });
+};
 
-    console.log("Message sent: %s", info.messageId);
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  });
-});
+export default sendVisitorMail;
