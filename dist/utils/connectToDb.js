@@ -4,10 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const connectToDb = () => {
     mongoose_1.default
-        .connect(process.env.MONGODB_URI ||
-        "mongodb+srv://rango:wUDPbtLUp7ZDQZQr@cluster0.2bxued0.mongodb.net/Wether?retryWrites=true&w=majority&appName=Cluster0")
+        .connect(process.env.MONGODB_URI)
         .then(() => console.log("MongoDB connected"))
         .catch((err) => console.error("MongoDB connection error:", err));
 };

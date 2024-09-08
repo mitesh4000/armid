@@ -1,18 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const requiredEnvVars = [
+    "PORT",
+    "BASE_API_URL",
+    "CRON_SCHEDULE",
+    "MONGODB_URI",
+    "IPINFO_API_KEY",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_SECURE",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "RECIPIENT_EMAIL",
+];
 function checkEnvironmentVariables() {
-    if (!process.env.BASE_API_URL) {
-        console.error(`Error: BASE_API_URL is not set.`);
-        throw new Error(`BASE_API_URL is required.`);
+    let varNotSet = 0;
+    requiredEnvVars.forEach((envVar) => {
+        if (!process.env[envVar]) {
+            console.error(`ERROR:${envVar} is not set`);
+            varNotSet += 1;
+        }
+    });
+    if (varNotSet > 0) {
+        console.error(`[  ${varNotSet}/${requiredEnvVars.length} variables are not set  ]`);
     }
-    if (!process.env.CRON_SHEDULE || !process.env.CRON_SHEDULE) {
-        console.error(`Error: CRON_SCHEDULE_IS_NOT_PROVIDED is not set.`);
-        throw new Error(`BASE_API_URL is required.`);
-    }
-    if (!process.env.IPINFO_API_KEY) {
-        console.error(`Error: IPINFO_API_KEY is not provided.`);
-        throw new Error(`IPINFO_API_KEY is required.`);
-    }
-    console.log("All required environment variables are set.");
 }
 exports.default = checkEnvironmentVariables;
